@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity,Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function AuthScreen({ navigation }) {
@@ -11,7 +11,7 @@ export default function AuthScreen({ navigation }) {
       Alert.alert('Error', 'Por favor, introduce nombre de usuario y contraseña.');
       return;
     }
-    navigation.navigate('Main');
+    navigation.navigate('Home');
   };
 
   return (
@@ -83,10 +83,6 @@ const styles = StyleSheet.create({
   forgotPassword: {
     alignSelf: 'flex-start',
     marginBottom: 20,
-  },
-  forgotPasswordText: {
-    color: '#007bff',
-    fontSize: 16,
   },
   loginButton: {
     width: '100%',

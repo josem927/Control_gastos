@@ -1,27 +1,26 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
-const Expense = () => {
+export default function Expenses() {
   return (
-    <TouchableOpacity onPress={() => console.log("Gastos")}>
-      <Text style={styles.expenseButton}>Gastos</Text>
-    </TouchableOpacity>
+    <View style={styles.container}>
+      <Text style={styles.title}>Añadir Gastos</Text>
+      {/* Aquí puedes agregar componentes y funcionalidades para añadir gastos */}
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  expenseButton: {
-    fontSize: 16,
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
-    borderRadius: 100, // Hace que el botón sea completamente redondo
-    paddingVertical: 32, // Ajusta el espaciado vertical para el botón
-    paddingHorizontal: 20, // Ajusta el espaciado horizontal para el botón
-    backgroundColor: '#FF5733', // Color de fondo del botón "Gastos"
-    overflow: 'hidden', // Esto asegura que el botón sea completamente redondo
-    elevation: 3, // Sombra para resaltar el botón
-    textAlign: 'center', // Alinea el texto en el centro del botón
+    color: '#333',
   },
 });
-
-export default Expense;

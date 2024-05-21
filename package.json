@@ -28,5 +28,9 @@
   "devDependencies": {
     "@babel/core": "^7.24.0"
   },
-  "private": true
+  "private": true,
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
