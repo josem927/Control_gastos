@@ -21,7 +21,7 @@ export default function AuthScreen({ navigation }) {
         <Icon name="user" size={20} color="#555" style={styles.inputIcon} />
         <TextInput
           style={styles.input}
-          placeholder="Nombre de Usuario"
+          placeholder="Nombre de Usuario prueba"
           value={username}
           onChangeText={text => setUsername(text)}
           placeholderTextColor="#555"
