@@ -5,7 +5,7 @@ export default function Expenses() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Añadir Gastos</Text>
-      {/* Aquí puedes agregar componentes y funcionalidades para añadir gastos */}
+     
     </View>
   );
 }
