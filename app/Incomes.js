@@ -1,53 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, Modal, TouchableOpacity, StatusBar, Plataform  } from 'react-native';
+import { StyleSheet, Text, View, Modal, TouchableOpacity, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-
 export default function App() {
-  const [expenses, setExpenses] = useState([]);
-  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
-  const [isIncome, setIsIncome] = useState(true);
-  const [title, setTitle] = useState('');
-  const [amount, setAmount] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(null);
-  const [balance, setBalance] = useState(0);
-
-  const addExpenseHandler = () => {
-    if (title.trim() === '' || amount.trim() === '') {
-      return;
-    }
-    const newExpense = {
-      id: Math.random().toString(),
-      title,
-      amount: parseFloat(amount),
-      type: isIncome ? 'income' : 'expense',
-    };
-    setExpenses(prevExpenses => [...prevExpenses, newExpense]);
-
-    if (isIncome) {
-      setBalance(prevBalance => prevBalance + parseFloat(amount));
-    } else {
-      setBalance(prevBalance => prevBalance - parseFloat(amount));
-    }
-
-    setTitle('');
-    setAmount('');
-    setIsAddModalVisible(false);
-    setModalVisible(false);
-  };
-
-  const deleteExpenseHandler = id => {
-    const expenseToDelete = expenses.find(expense => expense.id === id);
-    if (expenseToDelete) {
-      if (expenseToDelete.type === 'income') {
-        setBalance(prevBalance => prevBalance - expenseToDelete.amount);
-      } else {
-        setBalance(prevBalance => prevBalance + expenseToDelete.amount);
-      }
-    }
-    setExpenses(prevExpenses => prevExpenses.filter(expense => expense.id !== id));
-  };
+  const [concept, setConcept] = useState('');
+  const [amount, setAmount] = useState('');
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [totalExpenses, setTotalExpenses] = useState(0);
 
   const icons = [
     { name: 'home', label: 'Casa' },
@@ -62,7 +23,7 @@ export default function App() {
   ];
 
   const iconColors = {
-    home: '#00000', // Naranja
+    home: '#FFA500', // Cambiado a color naranja
     'shopping-bag': '#FFC0CB', // Violeta
     car: '#4169E1', // Azul
     heartbeat: '#F80000', // Rojo
@@ -72,109 +33,100 @@ export default function App() {
     wifi: '#00FFFF', // Cyan
     'shopping-cart': '#800000', // Marrón
   };
-  
-  const getIconColor = (iconName) => iconColors[iconName] || '#000';
-  const handleIconPress = (icon) => {
+
+  const getIconColor = iconName => iconColors[iconName] || '#000';
+  const handleIconPress = icon => {
     setSelectedIcon(icon);
     setModalVisible(true);
+  };
+
+  const handleAddIncome = () => {
+    const parsedAmount = parseFloat(amount);
+    if (!isNaN(parsedAmount)) {
+      setTotalIncome(prevTotalIncome => prevTotalIncome + parsedAmount);
+      setAmount('');
+      setConcept('');
+      setModalVisible(false);
+    }
+  };
+
+  const handleAddExpense = () => {
+    const parsedAmount = parseFloat(amount);
+    if (!isNaN(parsedAmount)) {
+      setTotalExpenses(prevTotalExpenses => prevTotalExpenses + parsedAmount);
+      setTotalIncome(prevTotalIncome => prevTotalIncome - parsedAmount);
+      setAmount('');
+      setConcept('');
+      setModalVisible(false);
+    }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.iconsContainer}>
-        {icons.slice(0, 4).map((icon, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.iconWrapper }
-            onPress={() => handleIconPress(icon)}
-          >
-            <Icon name={icon.name} size={40} color={getIconColor(icon.name)}/>
-            <Text style={styles.iconLabel}>{icon.label}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-      <View style={styles.balanceContainer}>
-        <Text style={styles.balanceText}>Saldo: ${balance.toFixed(2)}</Text>
-      </View>
-      <View style={styles.iconsContainer}>
-        {icons.slice(4).map((icon, index) => (
+        {icons.map((icon, index) => (
           <TouchableOpacity
             key={index}
             style={styles.iconWrapper}
             onPress={() => handleIconPress(icon)}
           >
-            <Icon name={icon.name} size={40} color={getIconColor(icon.name)} />
+            <View style={[styles.iconBackground, { backgroundColor: getIconColor(icon.name) }]}>
+              <Icon name={icon.name} size={40} color="#FFF" />
+            </View>
             <Text style={styles.iconLabel}>{icon.label}</Text>
           </TouchableOpacity>
         ))}
       </View>
-      <Modal visible={isAddModalVisible} animationType="slide" transparent={true}>
-        <View style={styles.modalBackground}>
-          <View style={styles.modalContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Concepto"
-              value={title}
-              onChangeText={text => setTitle(text)}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Cantidad"
-              value={amount}
-              onChangeText={text => setAmount(text.replace(/[^0-9.]/g, ''))}
-              keyboardType="numeric"
-            />
-            <View style={styles.modalButtonContainer}>
-              <Button title="Cancelar" color="red" onPress={() => setIsAddModalVisible(false)} />
-              <Button title="Agregar" onPress={addExpenseHandler} />
-            </View>
-          </View>
+      <View style={styles.totalAmountContainer}>
+        <View style={styles.totalAmountCard}>
+          <Text style={styles.totalAmountLabel}>Total de ingresos</Text>
+          <Text style={styles.totalAmountValue}>{totalIncome.toFixed(2)}</Text>
         </View>
-      </Modal>
+        <View style={styles.totalAmountCard}>
+          <Text style={styles.totalAmountLabel}>Total de gastos</Text>
+          <Text style={styles.totalAmountValue}>{totalExpenses.toFixed(2)}</Text>
+        </View>
+      </View>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => setModalVisible(true)}
+      >
+        <Text style={styles.addButtonText}>Agregar Ingreso</Text>
+      </TouchableOpacity>
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalText}>{selectedIcon?.label}</Text>
+            <Text style={styles.modalText}>Agregar Ingreso</Text>
             <TextInput
               style={styles.input}
               placeholder="Concepto"
-              value={title}
-              onChangeText={text => setTitle(text)}
+              value={concept}
+              onChangeText={text => setConcept(text)}
             />
             <TextInput
               style={styles.input}
               placeholder="Cantidad"
               value={amount}
-              onChangeText={text => setAmount(text.replace(/[^0-9.]/g, ''))}
+              onChangeText={text => setAmount(text)}
               keyboardType="numeric"
             />
             <View style={styles.modalButtonContainer}>
-              <Button title="Cancelar" color="red" onPress={() => setModalVisible(false)} />
-              <Button title="Agregar" onPress={addExpenseHandler} />
+              <TouchableOpacity
+                style={[styles.modalButton, { backgroundColor: '#008000' }]} 
+                onPress={handleAddIncome}
+              >
+                <Text style={styles.modalButtonText}>Agregar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.modalButtonText}>Cerrar</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity
-          style={[styles.roundButton, styles.incomeButton]}
-          onPress={() => {
-            setIsIncome(true);
-            setIsAddModalVisible(true);
-          }}
-        >
-          <Icon name="plus" size={30} color="green" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.roundButton, styles.expenseButton]}
-          onPress={() => {
-            setIsIncome(false);
-            setIsAddModalVisible(true);
-          }}
-        >
-          <Icon name="minus" size={30} color="red" />
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
@@ -185,29 +137,6 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
     justifyContent: 'space-between',
-  },
-  navbar: {
-    width: '100%',
-    height:'150%',
-    height: 50,
-    backgroundColor: '#f0f0f0', // Cambiar a un color neutro, por ejemplo, gris claro
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 25,
-  },  
-  navbarText: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
-    fontStyle: 'italic', // Agrega esta línea para establecer la cursiva
-  },
-  balanceContainer: {
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-  balanceText: {
-    fontSize: 24,
-    fontWeight: 'bold',
   },
   iconsContainer: {
     flexDirection: 'row',
@@ -220,19 +149,50 @@ const styles = StyleSheet.create({
     width: '30%',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1.5,
-    borderColor: 'black',
-    borderRadius: 10,
-    padding: 10,
-    marginVertical: 12,
-    margin: 5,
-    transform: [{ translateX: 5 }],
+    marginBottom: 20,
+  },
+  iconBackground: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+    backgroundColor: '#EDEDED',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   iconLabel: {
-    marginTop: 5,
     fontSize: 13,
     color: '#555',
     textAlign: 'center',
+  },
+  totalAmountContainer: {
+    alignItems: 'center',
+    marginTop: -20,
+    marginBottom: 20, 
+  },
+  totalAmountCard: {
+    backgroundColor: '#FFF', 
+    borderRadius: 10,
+    padding: 10,
+    alignItems: 'center',
+    width: '60%', 
+    marginBottom: 10, 
+  },
+  totalAmountLabel: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  totalAmountValue: {
+    fontSize: 16,
   },
   modalBackground: {
     flex: 1,
@@ -259,27 +219,28 @@ const styles = StyleSheet.create({
   },
   modalButtonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     marginTop: 10,
   },
-  buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 20,
+  modalButton: {
+    padding: 10,
+    borderRadius: 5,
+    width: '45%',
   },
-  roundButton: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: 'center',
+  modalButtonText: {
+    color: '#FFF',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  addButton: {
+    backgroundColor: '#008000', 
+    padding: 15,
+    borderRadius: 5,
     alignItems: 'center',
-    borderWidth: 2,
   },
-  incomeButton: {
-    borderColor: 'green',
-  },
-  expenseButton: {
-    borderColor: 'red',
+  addButtonText: {
+    color: '#FFF',
+    fontWeight: 'bold',
+    fontSize: 18,
   },
 });
-
