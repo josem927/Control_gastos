@@ -29,12 +29,12 @@ export default function App() {
     heartbeat: '#F80000', // Rojo
     cutlery: '#32CD32', // Verde
     paw: '#FFD700', // Amarillo
-    'lightbulb-o': '#FFFF00', // Amarillo
+    'lightbulb-o': '#FFF000', // Amarillo
     wifi: '#00FFFF', // Cyan
     'shopping-cart': '#800000', // Marrón
   };
 
-  const getIconColor = iconName => iconColors[iconName] || '#000';
+  const getIconColor = iconName => iconColors[iconName] || '#FFFFFF';
   const handleIconPress = icon => {
     setSelectedIcon(icon);
     setModalVisible(true);
@@ -63,6 +63,8 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.buttonContainer}>
+      </View>
       <View style={styles.iconsContainer}>
         {icons.map((icon, index) => (
           <TouchableOpacity
@@ -82,21 +84,12 @@ export default function App() {
           <Text style={styles.totalAmountLabel}>Total de ingresos</Text>
           <Text style={styles.totalAmountValue}>{totalIncome.toFixed(2)}</Text>
         </View>
-        <View style={styles.totalAmountCard}>
-          <Text style={styles.totalAmountLabel}>Total de gastos</Text>
-          <Text style={styles.totalAmountValue}>{totalExpenses.toFixed(2)}</Text>
-        </View>
+
       </View>
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => setModalVisible(true)}
-      >
-        <Text style={styles.addButtonText}>Agregar Ingreso</Text>
-      </TouchableOpacity>
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalText}>Agregar Ingreso</Text>
+            <Text style={styles.modalText}>Agregar Ingreso o Gasto</Text>
             <TextInput
               style={styles.input}
               placeholder="Concepto"
@@ -112,18 +105,24 @@ export default function App() {
             />
             <View style={styles.modalButtonContainer}>
               <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: '#008000' }]} 
+                style={[styles.modalButton, { backgroundColor: '#008000' }]}
                 onPress={handleAddIncome}
               >
-                <Text style={styles.modalButtonText}>Agregar</Text>
+                <Text style={styles.modalButtonText}>Agregar Ingreso</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.modalButton}
-                onPress={() => setModalVisible(false)}
+                style={[styles.modalButton, { backgroundColor: '#FF0000' }]}
+                onPress={handleAddExpense}
               >
-                <Text style={styles.modalButtonText}>Cerrar</Text>
+                <Text style={styles.modalButtonText}>Agregar Gasto</Text>
               </TouchableOpacity>
             </View>
+            <TouchableOpacity
+              style={[styles.modalButton, { backgroundColor: '#555', marginTop: 10 }]}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.modalButtonText}>Cerrar</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -135,7 +134,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#81D4FA',
+    justifyContent: 'space-between',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
     justifyContent: 'space-between',
   },
   iconsContainer: {
@@ -175,17 +178,25 @@ const styles = StyleSheet.create({
   },
   totalAmountContainer: {
     alignItems: 'center',
-    marginTop: -20,
-    marginBottom: 20, 
+    marginTop: 20,
+    marginBottom: 100, 
   },
   totalAmountCard: {
-    backgroundColor: '#FFF', 
-    borderRadius: 10,
-    padding: 10,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 25,
+    padding: 20,
     alignItems: 'center',
-    width: '60%', 
-    marginBottom: 10, 
-  },
+    width: '60%',
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 10,
+  },  
   totalAmountLabel: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -233,14 +244,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   addButton: {
-    backgroundColor: '#008000', 
     padding: 15,
     borderRadius: 5,
     alignItems: 'center',
+    width: '48%', 
   },
   addButtonText: {
     color: '#FFF',
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 16,
   },
+  card:{
+    
+  }
 });

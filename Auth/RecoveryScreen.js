@@ -10,7 +10,7 @@ export default function RecoveryScreen({ navigation }) {
       Alert.alert('Error', 'Por favor, introduce tu correo electrónico.');
       return;
     }
-    // Aquí puedes añadir la lógica para enviar el correo de recuperación
+   
     Alert.alert('Correo enviado', 'Se ha enviado un enlace de recuperación a tu correo electrónico.');
     navigation.navigate('Auth');
   };

@@ -5,6 +5,8 @@ import AuthScreen from './Auth/AuthScreen';
 import HomeScreen from './HomeScreen';
 import IncomeScreen from './app/Incomes';
 import ExpenseScreen from './app/Expenses';
+import RegisterScreen from './Auth/RegisterScreen';
+
 
 const Stack = createStackNavigator();
 
@@ -31,6 +33,11 @@ export default function App() {
           name="ExpenseScreen"
           component={ExpenseScreen}
           options={{ title: 'Añadir Gastos' }}
+        />
+        <Stack.Screen
+          name="RegisterScreen"
+          component={RegisterScreen}
+          options={{ title: '' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

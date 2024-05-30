@@ -3,18 +3,48 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'reac
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Svg, { Path } from 'react-native-svg';
 
-
-
 export default function AuthScreen({ navigation }) {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const handleLogin = () => {
-    if (username.trim() === '' || password.trim() === '') {
+
+  const handleLogin = async () => {
+    if (email.trim() === '' || password.trim() === '') {
       Alert.alert('Error', 'Por favor, introduce nombre de usuario y contraseña.');
       return;
     }
-    navigation.navigate('Home'); 
+  
+    try {
+      const response = await fetch('http://192.168.1.73:8000/api/login', { //aqui vas a cambiar por tu direccion ip de tu compu buscas ipconfig en tu consola caleth osea solo vas a camboar 192.168 por la tuya
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        // Autenticación exitosa, navegación a la pantalla Home
+        navigation.navigate('Home');
+      } else {
+        // Autenticación fallida, mostrar mensaje de error según la respuesta de la API
+        if (data.error === 'Unauthorized') {
+          Alert.alert('Error', 'Credenciales inválidas. Por favor, inténtalo nuevamente.');
+        } else {
+          Alert.alert('Error', 'Error al iniciar sesión. Por favor, inténtalo nuevamente más tarde.');
+        }
+      }
+    } catch (error) {
+      // Error al realizar la solicitud
+      console.error('Error al realizar la solicitud:', error);
+      Alert.alert('Error', 'Hubo un problema al conectar con el servidor. Por favor, intenta nuevamente más tarde.');
+    }
   };
+  
 
   return (
     <View style={styles.container}>
@@ -25,12 +55,12 @@ export default function AuthScreen({ navigation }) {
       <View style={styles.loginContainer}>
         <Text style={styles.title}>Iniciar Sesión</Text>
         <View style={styles.inputContainer}>
-          <Icon name="user" size={20} color="#555" style={styles.inputIcon} />
+          <Icon name="envelope" size={20} color="#555" style={styles.inputIcon} />
           <TextInput
             style={styles.input}
-            placeholder="Nombre de Usuario"
-            value={username}
-            onChangeText={text => setUsername(text)}
+            placeholder="Correo Electrónico"
+            value={email}
+            onChangeText={text => setEmail(text)}
             placeholderTextColor="#555"
           />
         </View>
@@ -51,6 +81,9 @@ export default function AuthScreen({ navigation }) {
         <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
           <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.registerText} onPress={() => navigation.navigate('RegisterScreen')}>
+          <Text style={styles.registerButtonText}>¿Aún no tienes una cuenta? Regístrate aquí</Text>
+        </TouchableOpacity>
       </View>
 
       <Svg height="200%" width="400%" viewBox="0 0 1430 320" style={[styles.svg, styles.svgBottom]} zIndex={-1}>
@@ -63,7 +96,6 @@ export default function AuthScreen({ navigation }) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -126,6 +158,14 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  registerText: {
+    marginTop: 20,
   },
   loginButtonText: {
     color: '#fff',
